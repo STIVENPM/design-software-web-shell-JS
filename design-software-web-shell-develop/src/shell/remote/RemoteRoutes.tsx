@@ -56,6 +56,7 @@ const monitoringCatalogs = {
 };
 
 function getRemoteProps(definition: (typeof REMOTE_DEFINITIONS)[number]): Record<string, unknown> {
+  if (definition.domain === 'actors') return { basePath: definition.basePath, getAccessToken: () => sessionStorage.getItem('sena.access_token') };
   if (definition.domain !== 'monitoring') return { basePath: definition.basePath };
 
   return {

@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { LoginPage } from './LoginPage';
 
 import type { SessionDataSource } from './data-source/session-data-source';
 import type { NotificationDataSource } from './data-source/notification-data-source';
@@ -34,7 +35,7 @@ export const ShellRoot = ({
   notificationDataSource,
   manifestSource,
 }: ShellRootProps) => {
-  const { state, logout } = useCurrentUser(dataSource);
+  const { state, reload, logout } = useCurrentUser(dataSource);
 
   // El router es la unica fuente de verdad de la ruta. Mantener un `useState` paralelo
   // con `pushState` manual desincroniza el shell: la URL cambia pero la vista no.
@@ -54,6 +55,10 @@ export const ShellRoot = ({
     await logout();
     navigate('/login', { replace: true });
   }, [logout, navigate]);
+
+  if (pathname === '/login' && state.status !== 'authenticated') {
+    return <LoginPage onLoggedIn={reload} />;
+  }
 
   if (state.status === 'loading') {
     return <div role="status">Cargando sesion...</div>;
